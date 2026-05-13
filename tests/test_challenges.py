@@ -86,6 +86,10 @@ def test_bfs_order_disconnected_component():
     ]
 
 
+def test_bfs_order_area_with_no_neighbors():
+    assert bfs_order(HAUNTED_HOTEL, "Attic") == ["Attic"]
+
+
 def test_dfs_order_from_lobby():
     assert dfs_order(HAUNTED_HOTEL, "Lobby") == [
         "Lobby",
@@ -105,6 +109,18 @@ def test_dfs_order_missing_start_returns_empty_list():
 
 def test_dfs_order_area_with_no_neighbors():
     assert dfs_order(HAUNTED_HOTEL, "Attic") == ["Attic"]
+
+
+def test_traversals_handle_cycle_without_revisiting():
+    cycle_graph = {
+        "A": ["B", "C"],
+        "B": ["A", "C"],
+        "C": ["A", "B"],
+    }
+
+    assert has_path(cycle_graph, "A", "C") is True
+    assert bfs_order(cycle_graph, "A") == ["A", "B", "C"]
+    assert dfs_order(cycle_graph, "A") == ["A", "B", "C"]
 
 
 def test_empty_graph_behavior():
