@@ -20,7 +20,7 @@ def get_neighbors(graph: Graph, area: str) -> list[str]:
         >>> get_neighbors(hotel, "Tower")
         []
     """
-    raise NotImplementedError
+    return graph.get(area, [])
 
 
 def has_path(graph: Graph, start: str, target: str) -> bool:
@@ -29,7 +29,26 @@ def has_path(graph: Graph, start: str, target: str) -> bool:
     Return False if either area is missing or if target cannot be reached.
     If start == target and the area exists, return True.
     """
-    raise NotImplementedError
+    if start not in graph or target not in graph:
+        return False
+
+    if start == target:
+        return True
+
+    queue: deque[str] = deque([start])
+    visited = {start}
+
+    while queue:
+        current = queue.popleft()
+
+        for neighbor in get_neighbors(graph, current):
+            if neighbor == target:
+                return True
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    return False
 
 
 def bfs_order(graph: Graph, start: str) -> list[str]:
@@ -39,7 +58,23 @@ def bfs_order(graph: Graph, start: str) -> list[str]:
     Use the neighbor order exactly as given in the graph.
     Return [] if start is missing.
     """
-    raise NotImplementedError
+    if start not in graph:
+        return []
+
+    order: list[str] = []
+    queue: deque[str] = deque([start])
+    visited = {start}
+
+    while queue:
+        current = queue.popleft()
+        order.append(current)
+
+        for neighbor in get_neighbors(graph, current):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    return order
 
 
 def dfs_order(graph: Graph, start: str) -> list[str]:
@@ -51,7 +86,26 @@ def dfs_order(graph: Graph, start: str) -> list[str]:
     helps the final traversal follow the original neighbor order.
     Return [] if start is missing.
     """
-    raise NotImplementedError
+    if start not in graph:
+        return []
+
+    order: list[str] = []
+    stack = [start]
+    visited: set[str] = set()
+
+    while stack:
+        current = stack.pop()
+        if current in visited:
+            continue
+
+        visited.add(current)
+        order.append(current)
+
+        for neighbor in reversed(get_neighbors(graph, current)):
+            if neighbor not in visited:
+                stack.append(neighbor)
+
+    return order
 
 
 def count_reachable_areas(graph: Graph, start: str) -> int:
@@ -59,4 +113,4 @@ def count_reachable_areas(graph: Graph, start: str) -> int:
 
     Stretch function. Return 0 if start is missing.
     """
-    raise NotImplementedError
+    return len(bfs_order(graph, start))
